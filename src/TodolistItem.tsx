@@ -1,11 +1,11 @@
 import {Button} from "./Components/Button.tsx";
 import {Task} from "./Task.tsx";
 import {FilterValues, TaskType, Todolist} from "./App.tsx";
-import {ChangeEvent, KeyboardEvent, useState} from "react";
+import {AddItemForm} from "./Components/AddItemForm.tsx";
 
 
 type Props = {
-  id:Todolist['id']
+  todolistId:Todolist['id']
   todolist: Todolist
   tasks: TaskType[],
   removeTask:(todolistId:Todolist['id'], taskId:TaskType['id']) => void,
@@ -17,7 +17,7 @@ type Props = {
 
 export const TodolistItem = (Props: Props) => {
   const {
-    id,
+    todolistId,
     todolist: {title, filter},
     tasks,
     removeTask,
@@ -27,32 +27,8 @@ export const TodolistItem = (Props: Props) => {
     removeTodolist} = Props
 
 
-  const [inputValue, setInputValue] = useState("");
-  const [error, setError] = useState<string | null>(null);
-
-  const createTaskHandler = () => {
-    const trimmedInputValue = inputValue.trim();
-    if(trimmedInputValue !== ''){
-      createTask(id, trimmedInputValue)
-      setInputValue("");
-    }else{
-      setError('Title is required');
-    }
-  }
-
-  const createTaskOnEnterHandler = (e:KeyboardEvent<HTMLInputElement>) => {
-    if(e.key === 'Enter') {
-      createTaskHandler()
-    }
-  }
-
-  const changeInputValueHandler = (event:ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.currentTarget.value);
-    setError(null);
-  }
-
   const changeFilterHandler = (filter:FilterValues) => {
-    changeFilter(id, filter);
+    changeFilter(todolistId, filter);
   }
 
   //const inputRef = useRef<HTMLInputElement>(null);
@@ -64,24 +40,20 @@ export const TodolistItem = (Props: Props) => {
   // }
 
   const removeTodolistHandler = () => {
-    removeTodolist(id)
+    removeTodolist(todolistId)
   }
 
+
+  const createTaskHandler = (title:string) => {
+    createTask(todolistId, title)
+  }
   return (
     <div>
       <h3>
         {title}
         <Button title={'X'} onClick={removeTodolistHandler}/>
       </h3>
-      <div>
-        <input value={inputValue}
-               className={error ? 'error' : ''}
-               onChange={changeInputValueHandler}
-               onKeyDown={createTaskOnEnterHandler}
-        />
-        <Button title={'+'} onClick={createTaskHandler}/>
-        {error && <div className={'error-message'}>{error}</div>}
-      </div>
+      <AddItemForm addItem={createTaskHandler}/>
       {tasks.length === 0 ? (
         <div>Тасок нет</div>
       ) : (
@@ -89,7 +61,7 @@ export const TodolistItem = (Props: Props) => {
           <Task tasks={tasks}
                 removeTask={removeTask}
                 changeTaskStatus={changeTaskStatus}
-                todolistId={id}
+                todolistId={todolistId}
           />
         </ul>
       )
