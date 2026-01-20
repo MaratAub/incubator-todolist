@@ -1,6 +1,7 @@
 import {TaskType, Todolist} from "./App.tsx";
 import {Button} from "./Components/Button.tsx";
 import {ChangeEvent} from "react";
+import {EditableSpan} from "./Components/EditableSpan.tsx";
 
 
 type Props = {
@@ -8,11 +9,23 @@ type Props = {
   removeTask:(todolistId:Todolist['id'], taskId:TaskType['id']) => void;
   changeTaskStatus:(todolistId:Todolist['id'], taskId:TaskType['id'], isDone:TaskType['isDone']) => void;
   todolistId:Todolist['id'];
+  updateTaskTitle:(todolistId:Todolist['id'], taskId:TaskType['id'], updatedTitle:string) => void
 }
 
 
-export const Task = ({tasks, removeTask, changeTaskStatus, todolistId}: Props) => {
+export const Task = (Props: Props) => {
 
+  const {
+    tasks,
+    removeTask,
+    changeTaskStatus,
+    todolistId,
+    updateTaskTitle} = Props
+
+
+  const updateTaskTitleHandler = (taskId:string, updateTitle:string) => {
+    updateTaskTitle(todolistId, taskId, updateTitle)
+  }
 
 
   return (
@@ -31,7 +44,8 @@ export const Task = ({tasks, removeTask, changeTaskStatus, todolistId}: Props) =
 
           return (
             <li key={t.id} className={t.isDone ? 'is-done' : ''}>
-              <input type="checkbox" checked={t.isDone} onChange={changeTaskStatusHandler}/><span>{t.title}</span>
+              <input type="checkbox" checked={t.isDone} onChange={changeTaskStatusHandler}/>
+              <EditableSpan oldTitle={t.title} onClick={(updateTitle:string) => updateTaskTitleHandler(t.id, updateTitle)}/>
               <Button title={"X"} onClick={removeTaskHandler}/>
             </li>
           )
