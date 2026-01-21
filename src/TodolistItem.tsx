@@ -1,21 +1,23 @@
-import {Button} from "./Components/Button.tsx";
+//import {Button} from "./Components/Button.tsx";
 import {Task} from "./Task.tsx";
 import {FilterValues, TaskType, Todolist} from "./App.tsx";
 import {AddItemForm} from "./Components/AddItemForm.tsx";
 import {EditableSpan} from "./Components/EditableSpan.tsx";
-
+import {Box, Button, IconButton, List} from "@mui/material";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import {containerSx} from "./TodolistItem.styles.ts";
 
 type Props = {
-  todolistId:Todolist['id']
+  todolistId: Todolist['id']
   todolist: Todolist
   tasks: TaskType[],
-  removeTask:(todolistId:Todolist['id'], taskId:TaskType['id']) => void,
-  changeFilter:(todolistId:Todolist['id'], filter:FilterValues)=>void,
-  createTask:(todolistId:Todolist['id'], title:TaskType['title']) => void,
-  changeTaskStatus:(todolistId:Todolist['id'], taskId:TaskType['id'], isDone:TaskType['isDone']) => void
-  removeTodolist:(todolistId:Todolist['id']) => void
-  updateTaskTitle:(todolistId:Todolist['id'], taskId:TaskType['id'], updatedTitle:string) => void
-  updateTodolistTitle:(todolistId:Todolist['id'], updatedTitle:string) => void
+  removeTask: (todolistId: Todolist['id'], taskId: TaskType['id']) => void,
+  changeFilter: (todolistId: Todolist['id'], filter: FilterValues) => void,
+  createTask: (todolistId: Todolist['id'], title: TaskType['title']) => void,
+  changeTaskStatus: (todolistId: Todolist['id'], taskId: TaskType['id'], isDone: TaskType['isDone']) => void
+  removeTodolist: (todolistId: Todolist['id']) => void
+  updateTaskTitle: (todolistId: Todolist['id'], taskId: TaskType['id'], updatedTitle: string) => void
+  updateTodolistTitle: (todolistId: Todolist['id'], updatedTitle: string) => void
 }
 
 export const TodolistItem = (Props: Props) => {
@@ -29,10 +31,11 @@ export const TodolistItem = (Props: Props) => {
     changeTaskStatus,
     removeTodolist,
     updateTaskTitle,
-    updateTodolistTitle} = Props
+    updateTodolistTitle
+  } = Props
 
 
-  const changeFilterHandler = (filter:FilterValues) => {
+  const changeFilterHandler = (filter: FilterValues) => {
     changeFilter(todolistId, filter);
   }
 
@@ -48,11 +51,11 @@ export const TodolistItem = (Props: Props) => {
     removeTodolist(todolistId)
   }
 
-  const createTaskHandler = (title:string) => {
+  const createTaskHandler = (title: string) => {
     createTask(todolistId, title)
   }
 
-  const updateTodolistTitleHandler = (title:string) => {
+  const updateTodolistTitleHandler = (title: string) => {
     updateTodolistTitle(todolistId, title)
   }
 
@@ -60,28 +63,49 @@ export const TodolistItem = (Props: Props) => {
   return (
     <div>
       <h3>
-        <EditableSpan oldTitle={title} onClick={updateTodolistTitleHandler}/>
-        <Button title={'X'} onClick={removeTodolistHandler}/>
+        <EditableSpan
+          oldTitle={title}
+          onClick={updateTodolistTitleHandler}
+        />
+        <IconButton onClick={removeTodolistHandler}>
+          <DeleteOutlineIcon/>
+        </IconButton>
       </h3>
-      <AddItemForm addItem={createTaskHandler}/>
+      <AddItemForm addItem={createTaskHandler} />
       {tasks.length === 0 ? (
         <div>Тасок нет</div>
       ) : (
-        <ul>
-          <Task tasks={tasks}
-                removeTask={removeTask}
-                changeTaskStatus={changeTaskStatus}
-                todolistId={todolistId}
-                updateTaskTitle={updateTaskTitle}
+        <List>
+          <Task
+            tasks={tasks}
+            removeTask={removeTask}
+            changeTaskStatus={changeTaskStatus}
+            todolistId={todolistId}
+            updateTaskTitle={updateTaskTitle}
           />
-        </ul>
+        </List>
       )
       }
-      <div>
-        <Button className={filter === 'All' ? 'active-filter' : ''} title={'All'} onClick={() => changeFilterHandler('All')}/>
-        <Button className={filter === 'Active' ? 'active-filter' : ''} title={'Active'} onClick={() => changeFilterHandler('Active')}/>
-        <Button className={filter === 'Completed' ? 'active-filter' : ''} title={'Completed'} onClick={() => changeFilterHandler('Completed')}/>
-      </div>
+      <Box sx={containerSx}>
+        <Button
+          size='small'
+          color={filter === 'All' ? 'secondary' : 'primary'}
+          variant='contained'
+          onClick={() => changeFilterHandler('All')}
+        >All</Button>
+        <Button
+          size='small'
+          color={filter === 'Active' ? 'secondary' : 'primary'}
+          variant='contained'
+          onClick={() => changeFilterHandler('Active')}
+        >Active</Button>
+        <Button
+          size='small'
+          color={filter === 'Completed' ? 'secondary' : 'primary'}
+          variant='contained'
+          onClick={() => changeFilterHandler('Completed')}
+        >Completed</Button>
+      </Box>
     </div>
   );
 };

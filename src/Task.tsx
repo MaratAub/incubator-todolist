@@ -1,7 +1,9 @@
 import {TaskType, Todolist} from "./App.tsx";
-import {Button} from "./Components/Button.tsx";
 import {ChangeEvent} from "react";
 import {EditableSpan} from "./Components/EditableSpan.tsx";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import {Box, Checkbox, IconButton, ListItem} from "@mui/material";
+import {containerSx, getListItemSx} from "./TodolistItem.styles.ts";
 
 
 type Props = {
@@ -43,11 +45,18 @@ export const Task = (Props: Props) => {
           }
 
           return (
-            <li key={t.id} className={t.isDone ? 'is-done' : ''}>
-              <input type="checkbox" checked={t.isDone} onChange={changeTaskStatusHandler}/>
-              <EditableSpan oldTitle={t.title} onClick={(updateTitle:string) => updateTaskTitleHandler(t.id, updateTitle)}/>
-              <Button title={"X"} onClick={removeTaskHandler}/>
-            </li>
+            <ListItem disablePadding sx={containerSx} key={t.id}>
+              <Box sx={getListItemSx(t.isDone)}>
+                <Checkbox size='small' checked={t.isDone} onChange={changeTaskStatusHandler}/>
+                <EditableSpan oldTitle={t.title} onClick={(updateTitle:string) => updateTaskTitleHandler(t.id, updateTitle)}/>
+              </Box>
+              <IconButton
+                size='small'
+                onClick={removeTaskHandler}
+              >
+                <DeleteOutlineIcon/>
+              </IconButton>
+            </ListItem>
           )
         })
       }
