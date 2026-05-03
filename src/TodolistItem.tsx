@@ -1,11 +1,9 @@
-//import {Button} from "./Components/Button.tsx";
 import {Task} from "./Task.tsx";
 import {FilterValues, TaskType, Todolist} from "./App.tsx";
-import {AddItemForm} from "./Components/AddItemForm.tsx";
-import {EditableSpan} from "./Components/EditableSpan.tsx";
-import {Box, Button, IconButton, List} from "@mui/material";
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import {Box, Button, List, Typography} from "@mui/material";
 import {containerSx} from "./TodolistItem.styles.ts";
+import {ItemTitle} from "./ItemTitle.tsx";
+import {CreateItemForm} from "./CreateItemForm.tsx";
 
 type Props = {
   todolistId: Todolist['id']
@@ -16,7 +14,7 @@ type Props = {
   createTask: (todolistId: Todolist['id'], title: TaskType['title']) => void,
   changeTaskStatus: (todolistId: Todolist['id'], taskId: TaskType['id'], isDone: TaskType['isDone']) => void
   removeTodolist: (todolistId: Todolist['id']) => void
-  updateTaskTitle: (todolistId: Todolist['id'], taskId: TaskType['id'], updatedTitle: string) => void
+  changeTaskTitle: (todolistId: Todolist['id'], taskId: TaskType['id'], updatedTitle: string) => void
   updateTodolistTitle: (todolistId: Todolist['id'], updatedTitle: string) => void
 }
 
@@ -30,7 +28,7 @@ export const TodolistItem = (Props: Props) => {
     createTask,
     changeTaskStatus,
     removeTodolist,
-    updateTaskTitle,
+    changeTaskTitle,
     updateTodolistTitle
   } = Props
 
@@ -39,13 +37,6 @@ export const TodolistItem = (Props: Props) => {
     changeFilter(todolistId, filter);
   }
 
-  //const inputRef = useRef<HTMLInputElement>(null);
-  // const createTaskHeandler = () => {
-  //   if(inputRef.current) {
-  //     createTask(inputRef.current.value)
-  //     inputRef.current.value = "";
-  //   }
-  // }
 
   const removeTodolistHandler = () => {
     removeTodolist(todolistId)
@@ -55,25 +46,21 @@ export const TodolistItem = (Props: Props) => {
     createTask(todolistId, title)
   }
 
-  const updateTodolistTitleHandler = (title: string) => {
+  const changeTodolistTitleHandler = (title: string) => {
     updateTodolistTitle(todolistId, title)
   }
 
 
   return (
     <div>
-      <h3>
-        <EditableSpan
-          oldTitle={title}
-          onClick={updateTodolistTitleHandler}
-        />
-        <IconButton onClick={removeTodolistHandler}>
-          <DeleteOutlineIcon/>
-        </IconButton>
-      </h3>
-      <AddItemForm addItem={createTaskHandler} />
+      <Typography variant='h5' sx={{display:'flex', justifyContent:'space-between',fontWeight:"bold"}}>
+        <ItemTitle title={title}
+                   changeTitle={(title:string) => changeTodolistTitleHandler(title)}
+                   deleteItem={removeTodolistHandler}/>
+      </Typography>
+      <CreateItemForm createItem={createTaskHandler} />
       {tasks.length === 0 ? (
-        <div>Тасок нет</div>
+        <Box sx={{padding:'5px 0'}}>Добавьте задачу</Box>
       ) : (
         <List>
           <Task
@@ -81,7 +68,7 @@ export const TodolistItem = (Props: Props) => {
             removeTask={removeTask}
             changeTaskStatus={changeTaskStatus}
             todolistId={todolistId}
-            updateTaskTitle={updateTaskTitle}
+            changeTaskTitle={changeTaskTitle}
           />
         </List>
       )

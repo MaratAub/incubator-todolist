@@ -2,22 +2,23 @@ import {v1} from 'uuid';
 import './App.css'
 import {TodolistItem} from "./TodolistItem.tsx";
 import {useState} from "react";
-import {AddItemForm} from "./Components/AddItemForm.tsx";
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
+import {ThemeSwitch} from "./ThemeSwitch.tsx";
 import {
   Box,
   Container, createTheme,
   CssBaseline,
   Grid,
-  Paper, Switch,
+  Paper,
   ThemeProvider
 } from "@mui/material";
 import {containerSx} from "./TodolistItem.styles.ts";
-import {NavButton} from "./Components/NavButton.ts";
-import { deepOrange } from '@mui/material/colors';
+import {NavButton} from "./NavButton.ts";
+import {amber, indigo} from '@mui/material/colors';
+import {CreateItemForm} from "./CreateItemForm.tsx";
 
 export type Todolist = {
   id: string
@@ -60,10 +61,7 @@ function App() {
   });
   //CRUD Todolist
   const changeFilter = (todolistId: Todolist['id'], filter: FilterValues) => {
-    setTodolists(prevState => prevState.map(tl => tl.id === todolistId ? {
-      ...tl,
-      filter
-    } : tl))
+    setTodolists(prevState => prevState.map(tl => tl.id === todolistId ? {...tl, filter} : tl))
   }
 
   const removeTodolist = (todolistId: Todolist['id']) => {
@@ -75,7 +73,7 @@ function App() {
   const createTodolist = (title: Todolist['title']) => {
     const id = v1()
     const newTodolist: Todolist = {id, title, filter: 'All'}
-    setTodolists([newTodolist, ...todolists])
+    setTodolists([...todolists, newTodolist])
     setTasks({...tasks, [id]: []})
   }
 
@@ -109,7 +107,7 @@ function App() {
     })
   }
 
-  const updateTaskTitle = (todolistId: Todolist['id'], taskId: TaskType['id'], updatedTitle: string) => {
+  const changeTaskTitle = (todolistId: Todolist['id'], taskId: TaskType['id'], updatedTitle: string) => {
     setTasks({
       ...tasks,
       [todolistId]: tasks[todolistId].map(t => t.id === taskId ? {
@@ -143,7 +141,7 @@ function App() {
             createTask={createTask}
             changeTaskStatus={changeTaskStatus}
             removeTodolist={removeTodolist}
-            updateTaskTitle={updateTaskTitle}
+            changeTaskTitle={changeTaskTitle}
             updateTodolistTitle={updateTodolistTitle}
           />
         </Paper>
@@ -155,10 +153,8 @@ function App() {
 
   const theme = createTheme({
     palette: {
-      primary: deepOrange,
-      secondary: {
-        main: '#33c6dc',
-      },
+      primary: indigo,
+      secondary: amber,
       mode: darkMode ? 'dark' : 'light',
     },
   })
@@ -173,10 +169,10 @@ function App() {
               <MenuIcon />
             </IconButton>
             <Box>
-              <Switch onChange={() => setDarkMode(!darkMode)}/>
+              <ThemeSwitch onChange={() => setDarkMode(!darkMode)}/>
               <NavButton>Sign in</NavButton>
               <NavButton>Sign up</NavButton>
-              <NavButton background={theme.palette.secondary.main}>Faq</NavButton>
+              <NavButton background={theme.palette.secondary.dark}>Faq</NavButton>
             </Box>
           </Toolbar>
         </AppBar>
@@ -185,7 +181,7 @@ function App() {
             container
             sx={{p: '15px 0'}}
           >
-            <AddItemForm addItem={createTodolist} />
+            <CreateItemForm createItem={createTodolist} />
           </Grid>
           <Grid
             container

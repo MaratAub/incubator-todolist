@@ -7,5 +7,7 @@ export const containerSx: SxProps = {
 
 export const getListItemSx = (isDone: boolean): SxProps => ({
   fontWeight: isDone ? 'normal' : 'bold',
+  fontStyle: isDone ? 'italic' : 'none',
+  textDecoration: isDone ? 'line-through' : 'none',
   opacity: isDone ? 0.5 : 1,
 })

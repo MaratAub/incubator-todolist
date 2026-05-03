@@ -1,9 +1,8 @@
 import {TaskType, Todolist} from "./App.tsx";
 import {ChangeEvent} from "react";
-import {EditableSpan} from "./Components/EditableSpan.tsx";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import {Box, Checkbox, IconButton, ListItem} from "@mui/material";
-import {containerSx, getListItemSx} from "./TodolistItem.styles.ts";
+import {Checkbox, ListItem} from "@mui/material";
+import {getListItemSx} from "./TodolistItem.styles.ts";
+import {ItemTitle} from "./ItemTitle.tsx";
 
 
 type Props = {
@@ -11,7 +10,7 @@ type Props = {
   removeTask:(todolistId:Todolist['id'], taskId:TaskType['id']) => void;
   changeTaskStatus:(todolistId:Todolist['id'], taskId:TaskType['id'], isDone:TaskType['isDone']) => void;
   todolistId:Todolist['id'];
-  updateTaskTitle:(todolistId:Todolist['id'], taskId:TaskType['id'], updatedTitle:string) => void
+  changeTaskTitle:(todolistId:Todolist['id'], taskId:TaskType['id'], updatedTitle:string) => void
 }
 
 
@@ -22,12 +21,8 @@ export const Task = (Props: Props) => {
     removeTask,
     changeTaskStatus,
     todolistId,
-    updateTaskTitle} = Props
+    changeTaskTitle} = Props
 
-
-  const updateTaskTitleHandler = (taskId:string, updateTitle:string) => {
-    updateTaskTitle(todolistId, taskId, updateTitle)
-  }
 
 
   return (
@@ -45,17 +40,13 @@ export const Task = (Props: Props) => {
           }
 
           return (
-            <ListItem disablePadding sx={containerSx} key={t.id}>
-              <Box sx={getListItemSx(t.isDone)}>
+            <ListItem disablePadding sx={{display:'flex', width:'100%'}} key={t.id}>
                 <Checkbox size='small' checked={t.isDone} onChange={changeTaskStatusHandler}/>
-                <EditableSpan oldTitle={t.title} onClick={(updateTitle:string) => updateTaskTitleHandler(t.id, updateTitle)}/>
-              </Box>
-              <IconButton
-                size='small'
-                onClick={removeTaskHandler}
-              >
-                <DeleteOutlineIcon/>
-              </IconButton>
+                <ItemTitle title={t.title}
+                           changeTitle={(title) => changeTaskTitle(todolistId, t.id, title)}
+                           deleteItem={removeTaskHandler}
+                           sx={getListItemSx(t.isDone)}
+                />
             </ListItem>
           )
         })
